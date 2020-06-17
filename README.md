@@ -1,4 +1,20 @@
-FIRECRACKER
+# MICRO VM CON FIRECRACKER
+
+## Índice
+
+### [1. Introducción]()
+### [2. Conceptos previos]()
+### [3. Firecracker]()
+### [4. Requisitos previos]()
+### [5. Puesta en marcha]()
+#### [5.1. Mediante API Restful]()
+#### [5.2. Mediante fichero JSON]()
+### [6. Creacion de kernel e imagen aptos para Firecracker]()
+### [7. Configuración de red]()
+### [8. Firectl]()
+### [9. Script de automatización]()
+### [10. Conclusión]()
+### [11. Bibliografía]()
 
 ANTES DE MICROVM, EXPLICAR FUNCIONAMIENTO DE UNA VM TRADICIONAL Y UN CONTENEDOR, VENTAJAS Y DESVENTAJAS
 LUEGO ENLAZARE Y EMPEZARE A EXPLICAR LAS VENTAJAS DE MICROVM
