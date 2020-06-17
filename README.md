@@ -17,48 +17,84 @@
 ### [11. Bibliografía]()
 
 
+
+
 ## 1. INTRODUCCIÓN
 
 Una micro VM (micro máquina virtual) es una máquina virtual liviana, que tiene la seguridad de las máquinas virtuales tradicionales; y el rendimiento de los contenedores. Firecracker hace uso de KVM para crear y administrar estas micro VMs. Vamos a conocer en profundidad las características de este tipo de tecnología, posibles usos y demostración de su funcionamiento.
+
+
 
 ## 2. CONCEPTOS PREVIOS
 
 * **Máquinas virtuales**
 
+Entidad aislada con su propio SO en la que es posible instalar aplicaciones.
+
 |Ventajas|Desventajas|
 |--------|----------------------|
 |Diferente kernel que la máquina real, más seguridad | Ralentización de máquina anfitriona |
-|Múltiples entorno de SO aislados entre si| Menor rendimiento que una máquina real
-|Mantenimiento, disponibilidad y recuperación sencillos|
-|Reducción de costes y eficiencia energética|
+|Múltiples entorno de SO aislados entre sí | Menor rendimiento que una máquina real, inicia SO completo
+|Mantenimiento, disponibilidad y recuperación sencillos |
+|Posibilidad de personalizar las características de la máquina |
+|Portabilidad |
+|Migración en vivo |
+
 
 * **Contenedores**
 
+Capacidad de ejecutar varios procesos y aplicaciones de forma aislada para hacer un mejor uso de su infraestructura, ya que no virtualiza un SO completo.
 
-
-ANTES DE MICROVM, EXPLICAR FUNCIONAMIENTO DE UNA VM TRADICIONAL Y UN CONTENEDOR, VENTAJAS Y DESVENTAJAS
-LUEGO ENLAZARE Y EMPEZARE A EXPLICAR LAS VENTAJAS DE MICROVM
-
+|Ventajas|Desventajas|
+|--------|----------------------|
+|Usan los recursos del anfitrión | Usa el kernel del anfitrión, menos seguridad |
+|Gran rendimiento y agilidad | Ausencia de systemd
+|Centrados en el desarrollo y despliegue de aplicaciones | Inestables en cuanto a almacenamiento
+|Portabilidad |
 
 
 ## 3. FIRECRACKER
 
-No esta en la paqueteria
-Escrito en Rust
-Tiene almacenamiento persistente, ya que guarda los archivos que creamos en la máquina en
-La principal ventaja es que el kernel empleado es reducido
-Software libre bajo la licencia de Apache
-En principio creado para AWS
-En nuestro caso hemos hecho las pruebas con un Alpine, el cual esta orientado específicamente a la seguridad, y a ser lo más ligero posible para consumir muy pocos recursos del sistema.
-Poca documentación
 
-- Requisitos previos
+**Características**
 
-Tener Kernel Linux 4.14 o superior => uname -a
+* Software libre bajo la licencia de Apache
+* Escrito en Rust
+* Creado por desarrolladores de AWS
 
-Tener KVM con permisos de lectura y escritura => ls -l /dev/kvm
+**Ventajas**
 
-PUESTA EN MARCHA MEDIANTE API RESTFUL
+* Hace uso de un kernel Linux reducido y aislado para mayor rendimiento
+* Hace uso de KVM para crear y gestionar las micro VM, un sistema nativo de Linux muy fiable
+* Posibilidad de personalizar las características de la máquina
+* Tiene almacenamiento persistente, ya que guarda los archivos que creamos en la imagen ".ext4"
+
+**Desventajas**
+
+* No esta en la paquetería oficial
+* Escasa documentación
+
+
+En nuestro caso hemos hecho las pruebas con Debian y con Alpine, un sistema orientado específicamente a la seguridad y a ser lo más ligero posible para consumir muy pocos recursos del sistema, por lo que tiene mucha sinergia con la tecnología MicroVM. Este SO cuenta con paquetería propia y con sistema de arranque OpenRC.
+
+## 4. REQUISITOS PREVIOS
+
+* Tener Kernel Linux 4.14 o superior
+
+~~~
+ftirado@nazo:~$ uname -a
+Linux nazo 4.19.0-9-amd64 #1 SMP Debian 4.19.118-2+deb10u1 (2020-06-07) x86_64 GNU/Linux
+~~~
+
+* Tener KVM con permisos de lectura y escritura => ls -l /dev/kvm
+
+~~~
+
+~~~
+
+## 5. PUESTA EN MARCHA
+
+### 5.1. MEDIANTE API RESTFUL
 
 Lo primero que tenemos que hacer es descargarnos el binario de Firecracker y darle permiso de ejecución.
 
@@ -136,7 +172,7 @@ curl --unix-socket /tmp/firecracker.socket -i \
      }'
 ~~~
 
-PUESTA EN MARCHA SIN HACER USO DE API RESTFUL (aun así podremos enviar peticiones una vez iniciada la micro máquina)
+### 5.2. MEDIANTE FICHERO JSON (aun así podremos enviar peticiones una vez iniciada la micro máquina)
 
 Este método es mucho más eficaz, ya que simplemente rellenaremos un fichero JSON indicando las características de la micro máquina y la iniciaremos con un simple comando. El fichero JSON tendrá este formato:
 
