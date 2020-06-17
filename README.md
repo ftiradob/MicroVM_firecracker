@@ -14,7 +14,7 @@
 ### [8. Firectl](https://github.com/ftiradob/MicroVM_firecracker#8-firectl-1)
 ### [9. Script de automatización](https://github.com/ftiradob/MicroVM_firecracker#9-script-de-automatizaci%C3%B3n-1)
 ### [10. Conclusión](https://github.com/ftiradob/MicroVM_firecracker#10-conclusi%C3%B3n-1)
-### [11. Webgrafía](https://github.com/ftiradob/MicroVM_firecracker#11-bibliograf%C3%ADa-1)
+### [11. Webgrafía](https://github.com/ftiradob/MicroVM_firecracker#11-webgraf%C3%ADa-1)
 
 
 
@@ -212,7 +212,21 @@ Y la iniciaremos de la siguiente manera:
 Ahora vamos a hacer una demostración sobre como levantar varias máquinas al mismo tiempo:
 
 ~~~
+for ((i=0; i<30; i++)); do
+    firecracker --api-sock /tmp/firecracker-$i.sock --config-file confibasica.json&
+done
+~~~
 
+Cuando levantemos tantas, van a ponerse en segundo plano automáticamente, por lo que tendremos que:
+
+~~~
+fg
+~~~
+
+Cuando acabemos y querramos cerrar todas las máquinas de golpe:
+
+~~~
+pkill firecracker
 ~~~
 
 ## 6. CREACIÓN DE KERNEL E IMAGEN APTOS PARA FIRECRACKER
@@ -309,12 +323,6 @@ Finalmente, una vez dentro de la máquina, podremos conectarnos a la interfaz cr
 ip addr add 172.16.0.2/24 dev eth0
 ip route add default via 172.16.0.1 dev eth0
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
-~~~
-
-Ahora vamos a levantar la máquina y comprobar si tiene red:
-
-~~~
-
 ~~~
 
 ## 8. FIRECTL
