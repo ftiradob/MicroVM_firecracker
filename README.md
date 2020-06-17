@@ -16,12 +16,32 @@
 ### [10. Conclusión]()
 ### [11. Bibliografía]()
 
+
+## 1. INTRODUCCIÓN
+
+Una micro VM (micro máquina virtual) es una máquina virtual liviana, que tiene la seguridad de las máquinas virtuales tradicionales; y el rendimiento de los contenedores. Firecracker hace uso de KVM para crear y administrar estas micro VMs. Vamos a conocer en profundidad las características de este tipo de tecnología, posibles usos y demostración de su funcionamiento.
+
+## 2. CONCEPTOS PREVIOS
+
+* **Máquinas virtuales**
+
+|Ventajas|Desventajas|
+|--------|----------------------|
+|Diferente kernel que la máquina real, más seguridad | Ralentización de máquina anfitriona |
+|Múltiples entorno de SO aislados entre si| Menor rendimiento que una máquina real
+|Mantenimiento, disponibilidad y recuperación sencillos|
+|Reducción de costes y eficiencia energética|
+
+* **Contenedores**
+
+
+
 ANTES DE MICROVM, EXPLICAR FUNCIONAMIENTO DE UNA VM TRADICIONAL Y UN CONTENEDOR, VENTAJAS Y DESVENTAJAS
 LUEGO ENLAZARE Y EMPEZARE A EXPLICAR LAS VENTAJAS DE MICROVM
 
 
 
-FINALMENTE HABLARE DE FIRECRACKER
+## 3. FIRECRACKER
 
 No esta en la paqueteria
 Escrito en Rust
@@ -30,6 +50,7 @@ La principal ventaja es que el kernel empleado es reducido
 Software libre bajo la licencia de Apache
 En principio creado para AWS
 En nuestro caso hemos hecho las pruebas con un Alpine, el cual esta orientado específicamente a la seguridad, y a ser lo más ligero posible para consumir muy pocos recursos del sistema.
+Poca documentación
 
 - Requisitos previos
 
