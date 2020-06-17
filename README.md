@@ -82,21 +82,29 @@ En nuestro caso hemos hecho las pruebas con Debian y con Alpine, un sistema orie
 * Tener Kernel Linux 4.14 o superior
 
 ~~~
-ftirado@nazo:~$ uname -a
-Linux nazo 4.19.0-9-amd64 #1 SMP Debian 4.19.118-2+deb10u1 (2020-06-07) x86_64 GNU/Linux
+uname -a
 ~~~
 
-* Tener KVM con permisos de lectura y escritura => ls -l /dev/kvm
+
+* Tener KVM con permisos de lectura y escritura
 
 ~~~
-
+sudo setfacl -m u:${USER}:rw /dev/kvm
 ~~~
+
 
 ## 5. PUESTA EN MARCHA
 
 ### 5.1. MEDIANTE API RESTFUL
 
-Lo primero que tenemos que hacer es descargarnos el binario de Firecracker y darle permiso de ejecución.
+Lo primero que tenemos que hacer es descargarnos el binario de Firecracker y darle permiso de ejecución. Opcionalmente, también podemos mover el binario a la ruta /usr/local/bin para que sea accesible para todos los usuarios.
+
+~~~
+wget https://github.com/firecracker-microvm/firecracker/releases/download/v0.21.1/firecracker-v0.21.1-x86_64
+mv firecracker-v0.21.1-x86_64 firecracker
+chmod +x firecracker
+sudo mv firecracker /usr/local/bin/
+~~~
 
 Una vez hecho esto, debemos asegurarnos que Firecracker puede crear el socket para la API. Para esto lo que vamos a hacer primero es borrarlo por si había alguno existente:
 
@@ -125,9 +133,6 @@ kernel_path=$(pwd)"/hello-vmlinux.bin"
         \"kernel_image_path\": \"${kernel_path}\",
         \"boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off\"
    }"
-
---unix-socket => Se conecta a través del socket Unix especificado, en vez de mediante internet.
--X => 
 ~~~
 
 En la segunda llamada vamos a establecer la imagen que va a tener nuestra micro máquina:
@@ -172,9 +177,9 @@ curl --unix-socket /tmp/firecracker.socket -i \
      }'
 ~~~
 
-### 5.2. MEDIANTE FICHERO JSON (aun así podremos enviar peticiones una vez iniciada la micro máquina)
+### 5.2. MEDIANTE FICHERO JSON
 
-Este método es mucho más eficaz, ya que simplemente rellenaremos un fichero JSON indicando las características de la micro máquina y la iniciaremos con un simple comando. El fichero JSON tendrá este formato:
+Este método es mucho más eficaz, ya que simplemente rellenaremos un fichero JSON indicando las características de la micro máquina y la iniciaremos con un simple comando. Todavía podremos enviar peticiones a la API una vez iniciada la micro máquina. El fichero JSON tendrá este formato:
 
 ~~~
 {
@@ -198,13 +203,20 @@ Este método es mucho más eficaz, ya que simplemente rellenaremos un fichero JS
 }
 ~~~
 
-Y la iniciaremos de la siguiente manera: (Asegurar que no hay socket previo creado)
+Y la iniciaremos de la siguiente manera:
 
 ~~~
 ./firecracker --api-sock /tmp/firecracker.socket --config-file nombrejson.json
 ~~~
 
-COMO CREAR UN KERNEL E IMAGEN PROPIOS
+Ahora vamos a hacer una demostración sobre como levantar varias máquinas al mismo tiempo:
+
+~~~
+
+~~~
+
+## 6. CREACIÓN DE KERNEL E IMAGEN APTOS PARA FIRECRACKER
+
 
 Lo primero que tenemos que hacer es crear una imagen vacía de por ejemplo 50 MB:
 
@@ -259,7 +271,8 @@ Finalmente desmontamos y ya estamos listos para probar nuestra imagen:
 sudo umount /tmp/ferfs
 ~~~
 
-COMO AÑADIR RED A LA MÁQUINA
+
+## 7. Configuración de red
 
 Para hacer esto, haremos uso de una interfaz de red virtual usando tap. Vamos a crearla:
 
@@ -298,13 +311,17 @@ ip route add default via 172.16.0.1 dev eth0
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 ~~~
 
-LEVANTAMOS LA MÁQUINA CON RED
+Ahora vamos a levantar la máquina y comprobar si tiene red:
 
-FIRECTL
+~~~
+
+~~~
+
+## 8. FIRECTL
 
 Es una extensión de Firecracker que te permite poner en marcha las micro máquinas sin necesidad de API ni archivos JSON ni dos terminales, sino directamente mediante línea de comandos.
 
-Para descargar esta extensión necesitaremos hacer lo siguiente:
+Para descargar el binario de esta extensión necesitaremos hacer lo siguiente:
 
 ~~~
 git clone https://github.com/firecracker-microvm/firectl
@@ -327,7 +344,7 @@ sudo ./firectl \
 				--socket-path=./firecracker.socket
 ~~~
 
-SCRIPT DE AUTOMATIZACIÓN PARA LA CREACIÓN DE MICROVM
+## 9. SCRIPT DE AUTOMATIZACIÓN
 
 Con el siguiente script podremos:
 
@@ -471,6 +488,20 @@ git clone https://github.com/ftiradob/MicroVM_firecracker
 sh automicrovm.sh
 ~~~
 
+## 10. CONCLUSIÓN
 
+Es una tecnología muy util que en el futuro tiene bastante potencial como para "ponerse de moda" como ocurre ahora mismo con los contenedores. Necesita todavía un empujón de los desarrolladores y de la comunidad para que el proyecto cuente con el menor número de errores posibles, mejor documentación e incluso llegue a formar parte de la paquetería oficial Debian. Las micro VM son un excelente punto intermedio entre una máquina virtual tradicional pesada y un contenedor de aplicaciones ligero.
 
-CURL?
+## 11. BIBLIOGRAFÍA
+
+Amazon Web Services (2018 - 2020) - Página oficial de Firecracker
+[https://firecracker-microvm.github.io/](https://firecracker-microvm.github.io/)
+
+Amazon Web Services (2018 - 2020) - Repositorio oficial de Firecracker
+[https://github.com/firecracker-microvm/firecracker](https://github.com/firecracker-microvm/firecracker)
+
+Amazon Web Services (2018 - 2020) - Repositorio oficial de Firectl
+[https://github.com/firecracker-microvm/firectl](https://github.com/firecracker-microvm/firectl)
+
+Swarvanu Sengupta (2019) - Blog explicativo sobre Firectl
+[https://medium.com/@s8sg/quick-start-with-firecracker-and-firectl-in-ubuntu-f58aeedae04b](https://medium.com/@s8sg/quick-start-with-firecracker-and-firectl-in-ubuntu-f58aeedae04b)
