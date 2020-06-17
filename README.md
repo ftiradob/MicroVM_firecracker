@@ -394,7 +394,7 @@ fi
 Instrucciones de uso:
 
 ~~~
-git clone
+git clone https://github.com/ftiradob/MicroVM_firecracker
 sh automicrovm.sh
 ~~~
 
